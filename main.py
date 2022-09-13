@@ -7,7 +7,7 @@ from model import lstm, conv, convlstm
 from KTFCM import generate_points, ktfcm
 
 if __name__ == '__main__':
-    data = pd.read_csv("深证A指_processed.csv", index_col=0)  # 读取经过预处理的数据集
+    data = pd.read_csv("data/深证A指_processed.csv", index_col=0)  # 读取经过预处理的数据集
     Ntr = 3333  # 训练集样本数
     Ntu = 40  # 调优集样本数
     Nte = 1  # 测试集样本数

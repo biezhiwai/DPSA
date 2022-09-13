@@ -32,4 +32,4 @@ data = data[15:]
 raw_data = data.get(['mov_percent', 'EMA-5', 'ROC-5', 'RSI']).values
 Scaler = MinMaxScaler().fit(raw_data)
 data[['mov_percent', 'EMA-5', 'ROC-5', 'RSI']] = Scaler.transform(raw_data)
-data.to_csv("深证A指_processed.csv")
+data.to_csv("data/深证A指_processed.csv")
