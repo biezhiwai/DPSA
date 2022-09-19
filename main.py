@@ -1,10 +1,15 @@
 import numpy as np
 import pandas as pd
+import tqdm
+from torch.optim.lr_scheduler import StepLR
+
 from dataset import load_data, generate_dataset
 import gc
 from keras import backend
-from model import lstm, conv, convlstm
+from model import lstm, conv, convlstm, LSTM
 from KTFCM import generate_points, ktfcm
+import torch
+
 
 if __name__ == '__main__':
     data = pd.read_csv("data/深证A指_processed.csv", index_col=0)  # 读取经过预处理的数据集
@@ -18,7 +23,10 @@ if __name__ == '__main__':
     SL = [11, 12, 13, 14, 15, 16, 17, 18, 19, 20]  # 序列长度L的所有取值
     # 输入特征，有股票涨跌幅（放在最前面，用于聚类）、technical indicators、other indicators
     features = ['mov_percent', 'EMA-5', 'ROC-5', 'RSI']
+    batch_size = 512
+    epochs = 100
     n_windows = 30  # 要预测的天数
+
     predict_accuracy = 0.0  # 最终预测精度
 
     X = [load_data(data, L, Ntr + Ntu + Nte + n_windows - 1, features) for L in SL]  # 装载数据

@@ -1,16 +1,17 @@
 import numpy as np
 import pandas as pd
 from keras.utils import np_utils
+import torch
 
 
 # 所有区间均为左闭右开
-def load_data(data, L, n_samples, features):
+def load_data(data, seq_len, n_samples, features):
     samples = []
 
-    for i in range(len(data) - L - n_samples, len(data) - L):  # 枚举长度为L的所有序列
-        sample = {'x': data.get(features).values[i: i + L],  # L天的特征向量组成一个样本(timesteps, n_features)
-                  'y': data['movement'].iloc[i + L],  # 标签
-                  'date': data['date'].iloc[i + L]}  # 该样本要预测涨跌的日期
+    for i in range(len(data) - seq_len - n_samples, len(data) - seq_len):  # 枚举长度为L的所有序列
+        sample = {'x': data.get(features).values[i: i + seq_len],  # seq_len天的特征向量组成一个样本(timesteps, n_features)
+                  'y': data['movement'].iloc[i + seq_len],  # 标签
+                  'date': data['date'].iloc[i + seq_len]}  # 该样本要预测涨跌的日期
         samples.append(sample)
 
     return samples
@@ -41,5 +42,12 @@ def generate_dataset(samples, i_window, Ntr, Ntu, Nte):
     y_train = np.reshape(y[train_begin:tune_begin], (Ntr,) + y_shape)
     y_tune = np.reshape(y[tune_begin:test_begin], (Ntu,) + y_shape)
     y_test = np.reshape(y[test_begin:test_end], (Nte,) + y_shape)
+
+    x_train = torch.from_numpy(x_train)
+    x_tune = torch.from_numpy(x_tune)
+    x_test = torch.from_numpy(x_test)
+    y_train = torch.from_numpy(y_train)
+    y_tune = torch.from_numpy(y_tune)
+    y_test = torch.from_numpy(y_test)
 
     return x_train, x_tune, x_test, y_train, y_tune, y_test
